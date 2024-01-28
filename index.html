@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attractive To-Do List</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 300px;
+            transition: background-color 0.3s ease-in-out;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #taskList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        .task:last-child {
+            border-bottom: none;
+        }
+
+        .task-text {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .edit-btn {
+            background-color: #3498db;
+        }
+
+        #colorPicker {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        #date-time {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        #resetBtn {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h1>To-Do List</h1>
+        <div id="date-time"></div>
+        <input type="text" id="taskInput" placeholder="Add new task...">
+        <input type="color" id="colorPicker" value="#fff" title="Change Background Color">
+        <ul id="taskList"></ul>
+        <button id="resetBtn">Reset All Tasks</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskInput = document.getElementById('taskInput');
+            const taskList = document.getElementById('taskList');
+            const colorPicker = document.getElementById('colorPicker');
+            const container = document.getElementById('container');
+            const dateTimeElement = document.getElementById('date-time');
+            const resetBtn = document.getElementById('resetBtn');
+
+            colorPicker.addEventListener('input', function() {
+                container.style.backgroundColor = colorPicker.value;
+            });
+
+            taskInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTask(taskInput.value);
+                    taskInput.value = '';
+                }
+            });
+
+            resetBtn.addEventListener('click', function() {
+                taskList.innerHTML = '';
+            });
+
+            function addTask(taskText) {
+                if (taskText.trim() !== '') {
+                    const li = document.createElement('li');
+                    li.className = 'task';
+                    li.innerHTML = `
+                        <span class="task-text">${taskText}</span>
+                        <button class="edit-btn">Edit</button>
+                        <button class="delete-btn">Delete</button>
+                    `;
+                    taskList.appendChild(li);
+
+                    const editBtn = li.querySelector('.edit-btn');
+                    const deleteBtn = li.querySelector('.delete-btn');
+                    const taskTextSpan = li.querySelector('.task-text');
+
+                    editBtn.addEventListener('click', function() {
+                        const newText = prompt('Edit task:', taskTextSpan.textContent);
+                        if (newText !== null) {
+                            taskTextSpan.textContent = newText;
+                        }
+                    });
+
+                    deleteBtn.addEventListener('click', function() {
+                        li.remove();
+                    });
+                }
+            }
+
+            function updateDateTime() {
+                const options = {
+                    timeZone: 'Asia/Kolkata',
+                    hour12: true,
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                };
+                const dateTime = new Date().toLocaleString('en-US', options);
+                dateTimeElement.textContent = dateTime;
+            }
+
+            // Initial update
+            updateDateTime();
+
+            // Update every second
+            setInterval(updateDateTime, 1000);
+        });
+    </script>
+
+</body>
+</html>
